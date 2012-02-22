@@ -43,6 +43,12 @@ function views_load_more_theme() {
 function views_load_more_ajax_data_alter(&$object, $type , $view) {
   // Change the callback if its a views_load_more pagers.
   if (is_a($view->query->pager, 'views_plugin_pager_load_more')) {
+    // If AJAX driven exposed filters are enabled, and the exposed form
+    // is submitted, we'll return to page 0. Skip our callback on the
+    // very first page.
+    if ($view->query->pager->current_page <= 0) {
+      return;
+    }
     $object->__callbacks = array('Drupal.viewsLoadMore');    
   }
 }
