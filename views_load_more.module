@@ -76,7 +76,7 @@ function theme_views_load_more_pager($text = '', $limit = 10, $element = 0, $par
   drupal_add_js(drupal_get_path('module', 'views_load_more') . '/views_load_more.js', 'module');
 
   // Lets get out load more button.
-  $li_next = theme('pager_next', (!empty($tags) ? $tags : t('Load More')), $limit, $element, 1, $parameters);
+  $li_next = theme('pager_next', (!empty($text) ? $text : t('Load More')), $limit, $element, 1, $parameters);
 
   if (empty($li_next)) {
     $li_next = "&nbsp;";
