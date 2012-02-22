@@ -36,7 +36,7 @@ class views_plugin_pager_load_more extends views_plugin_pager_full {
 
   function render($input) {
     $pager_theme = views_theme_functions('views_load_more_pager', $this->view, $this->display);
-    return theme($pager_theme, (empty($input) ? $this->options['load_more_link_text'] : $input), $this->options['items_per_page'], $this->options['id']);
+    return theme($pager_theme, $this->options['load_more_link_text'], $this->options['items_per_page'], $this->options['id'], $input);
   }
 }
 

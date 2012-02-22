@@ -55,8 +55,8 @@ function views_load_more_ajax_data_alter(&$object, $type , $view) {
 
 /**
  * Provides a theme implementation for the pager element.
- * @param $tags
- *  HTML content to apply this theme function to.
+ * @param $text
+ *  The anchor text that will be used for this pager link.
  * @param $limit
  *  How many items should be paged.
  * @param $element
@@ -69,7 +69,7 @@ function views_load_more_ajax_data_alter(&$object, $type , $view) {
  *  A themed pager element.
  * @retval string
  */
-function theme_views_load_more_pager($tags = '', $limit = 10, $element = 0, $parameters = array(), $quantity = 9) {
+function theme_views_load_more_pager($text = '', $limit = 10, $element = 0, $parameters = array(), $quantity = 9) {
   global $pager_total;
 
   // Lets add our JS.
