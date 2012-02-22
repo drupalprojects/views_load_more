@@ -69,14 +69,14 @@ function views_load_more_ajax_data_alter(&$object, $type , $view) {
  *  A themed pager element.
  * @retval string
  */
-function theme_views_load_more_pager($tags = array(), $limit = 10, $element = 0, $parameters = array(), $quantity = 9) {
+function theme_views_load_more_pager($tags = '', $limit = 10, $element = 0, $parameters = array(), $quantity = 9) {
   global $pager_total;
 
   // Lets add our JS.
-  drupal_add_js(drupal_get_path('module', 'views_load_more').'/views_load_more.js', 'module');
+  drupal_add_js(drupal_get_path('module', 'views_load_more') . '/views_load_more.js', 'module');
 
   // Lets get out load more button.
-  $li_next = theme('pager_next', (isset($tags[3]) ? $tags[3] : t('Load More')), $limit, $element, 1, $parameters);
+  $li_next = theme('pager_next', (!empty($tags) ? $tags : t('Load More')), $limit, $element, 1, $parameters);
 
   if (empty($li_next)) {
     $li_next = "&nbsp;";
