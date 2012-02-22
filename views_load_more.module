@@ -1,7 +1,13 @@
 <?php
+/**
+ * @file
+ *  Provides a replacement pager element for Views displays.
+ */
 
 /**
  * Implementation of hook_views_api().
+ *
+ * @see hook_views_api()
  */
 function views_load_more_views_api() {
   return array('api' => '3.0-alpha1');
@@ -11,6 +17,8 @@ function views_load_more_views_api() {
 
 /**
  * Implementation of hook_theme().
+ *
+ * @see hook_theme()
  */
 function views_load_more_theme() {
   return array(
@@ -20,15 +28,41 @@ function views_load_more_theme() {
   );
 }
 
-function views_load_more_ajax_data_alter($object, $type , $view) {
+/**
+ * Implementation of hook_ajax_data_alter().
+ *
+ * @param $object
+ *  The settings to be modified.
+ * @param $type
+ *  The object type (usually just 'view').
+ * @param $view
+ *  The View which will be manipulated.
+ *
+ * @see hook_ajax_data_alter()
+ */
+function views_load_more_ajax_data_alter(&$object, $type , $view) {
   // Change the callback if its a views_load_more pagers.
   if (is_a($view->query->pager, 'views_plugin_pager_load_more')) {
     $object->__callbacks = array('Drupal.viewsLoadMore');    
   }
 }
 
-
-
+/**
+ * Provides a theme implementation for the pager element.
+ * @param $tags
+ *  HTML content to apply this theme function to.
+ * @param $limit
+ *  How many items should be paged.
+ * @param $element
+ *  (Not sure how this is used)
+ * @param $parameters
+ *  GET parameters passed to theme_pager_next().
+ * @param $quantity
+ *  The number of "pages" to display. Ignored by this module.
+ * @return
+ *  A themed pager element.
+ * @retval string
+ */
 function theme_views_load_more_pager($tags = array(), $limit = 10, $element = 0, $parameters = array(), $quantity = 9) {
   global $pager_total;
 
