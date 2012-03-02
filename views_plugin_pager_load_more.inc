@@ -137,7 +137,7 @@ class views_plugin_pager_load_more extends views_plugin_pager_full {
       // Otherwise, we'll see the same results twice.
       else {
         // Ensure the current offset is known. If this value is empty or null, we need to force it to 0.
-        $current_offset = (int) $this->view->offset;
+        $current_offset = (int) $this->view->query->offset;
         // Adjust the offset to account for our first page.
         $this->view->query->set_offset($current_offset + $this->options['load_more']['items_first_page']);
       }
