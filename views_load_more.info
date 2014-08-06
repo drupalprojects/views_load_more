@@ -1,4 +1,0 @@
-name = Views Load More
-description = Yet another load more pager for views
-core = 6.x
-dependencies[] = views
