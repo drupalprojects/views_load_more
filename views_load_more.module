@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file views_load_more.module
  *
@@ -7,25 +6,95 @@
  * of a view instead of replacing it.
  */
 
-/**
- * Implementation of hook_views_api().
- */
-function views_load_more_views_api() {
-  return array('api' => '3.0-alpha1');
-}
-
 // We need to implement our own tpls for items being return via the load-more pager.
 
 /**
- * Implementation of hook_theme().
+ * Implements hook_theme().
  */
 function views_load_more_theme() {
+
   return array(
     'views_load_more_pager' => array(
-      'variables' => array('tags' => array(), 'quantity' => 10, 'element' => 0, 'parameters' => array()),
+      'variables' => array(
+        'element' => 0,
+        'parameters' => array(),
+        'more_button_text' => '',
+        'end_text' => '',
+      ),
       'pattern' => 'views_load_more_pager__',
     ),
   );
+}
+
+/**
+ * Preprocess function for views_load_more_pager theme hook.
+ */
+function template_preprocess_views_load_more_pager(&$variables) {
+  $element = $variables['element'];
+  $parameters = $variables['parameters'];
+  global $pager_page_array, $pager_total;
+
+  // Nothing to do if there is only one page.
+  if ($pager_total[$element] <= 1) {
+    return;
+  }
+
+  // Calculate various markers within this pager piece:
+  // Max is the maximum page number
+  $pager_max = $pager_total[$element];
+
+  // Create the "next" link if we are not on the last page.
+  if ($pager_page_array[$element] < ($pager_max - 1)) {
+    $options = array(
+      'query' => pager_query_add_page($parameters, $element, $pager_page_array[$element] + 1),
+    );
+    $variables['next_url'] = \Drupal::url('<current>', [], $options);
+  }
+}
+
+/**
+ * Theme function
+ */
+function theme_views_load_more_pager($vars) {
+  global $pager_page_array, $pager_total;
+
+  $tags = $vars['tags'];
+  $element = $vars['element'];
+  $parameters = $vars['parameters'];
+
+  $pager_classes = array('pager', 'pager-load-more');
+
+  $li_next = theme('pager_next',
+    array(
+      'text' => (isset($tags[3]) ? $tags[3] : t($vars['more_button_text'])),
+      'element' => $element,
+      'interval' => 1,
+      'parameters' => $parameters,
+    )
+  );
+  if (empty($li_next)) {
+    $li_next = empty($vars['end_text']) ? '&nbsp;' : t($vars['end_text']);
+    $pager_classes[] = 'pager-load-more-empty';
+  }
+  // Compatibility with tao theme's pager
+  elseif (is_array($li_next) && isset($li_next['title'], $li_next['href'], $li_next['attributes'], $li_next['query'])) {
+    $li_next = l($li_next['title'], $li_next['href'], array('attributes' => $li_next['attributes'], 'query' => $li_next['query']));
+  }
+
+  if ($pager_total[$element] > 1) {
+    $items[] = array(
+      'class' => array('pager-next'),
+      'data' => $li_next,
+    );
+    return theme('item_list',
+      array(
+        'items' => $items,
+        'title' => NULL,
+        'type' => 'ul',
+        'attributes' => array('class' => $pager_classes),
+      )
+    );
+  }
 }
 
 /**
@@ -77,48 +146,6 @@ function views_load_more_views_ajax_data_alter(&$commands, $view) {
         );
       }
     }
-  }
-}
-
-function theme_views_load_more_pager($vars) {
-  global $pager_page_array, $pager_total;
-
-  $tags = $vars['tags'];
-  $element = $vars['element'];
-  $parameters = $vars['parameters'];
-
-  $pager_classes = array('pager', 'pager-load-more');
-
-  $li_next = theme('pager_next',
-    array(
-      'text' => (isset($tags[3]) ? $tags[3] : t($vars['more_button_text'])),
-      'element' => $element,
-      'interval' => 1,
-      'parameters' => $parameters,
-    )
-  );
-  if (empty($li_next)) {
-    $li_next = empty($vars['more_button_empty_text']) ? '&nbsp;' : t($vars['more_button_empty_text']);
-    $pager_classes[] = 'pager-load-more-empty';
-  }
-  // Compatibility with tao theme's pager
-  elseif (is_array($li_next) && isset($li_next['title'], $li_next['href'], $li_next['attributes'], $li_next['query'])) {
-    $li_next = l($li_next['title'], $li_next['href'], array('attributes' => $li_next['attributes'], 'query' => $li_next['query']));
-  }
-
-  if ($pager_total[$element] > 1) {
-    $items[] = array(
-      'class' => array('pager-next'),
-      'data' => $li_next,
-    );
-    return theme('item_list',
-      array(
-        'items' => $items,
-        'title' => NULL,
-        'type' => 'ul',
-        'attributes' => array('class' => $pager_classes),
-      )
-    );
   }
 }
 

@@ -1,0 +1,10 @@
+<nav class="pager pager--load-more" role="navigation" aria-labelledby="pagination-heading">
+  <h4 id="pagination-heading" class="visually-hidden">{{ 'Pagination'|t }}</h4>
+  <div class="pager__items">
+    {% if next_url %}
+      <a href="{{ next_url }}">{{ more_button_text }}</a>
+    {% elseif end_text %}
+      {{ end_text }}
+    {% endif %}
+  </div>
+</nav>
