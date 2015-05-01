@@ -26,6 +26,16 @@ use Drupal\views\Plugin\views\pager\Full;
 class LoadMore extends Full {
 
   /**
+   * The default jQuery selector for views content.
+   */
+  const DEFAULT_CONTENT_SELECTOR = '> .view-content';
+
+  /**
+   * The default jQuery selector for view pager.
+   */
+  const DEFAULT_PAGER_SELECTOR = '.pager--load-more';
+
+  /**
    * Overrides \Drupal\views\Plugin\views\pager\Full::summaryTitle().
    */
   public function summaryTitle() {
@@ -46,12 +56,11 @@ class LoadMore extends Full {
     $options['more_button_text'] = array('default' => $this->t('Load more'));
     $options['end_text'] = array('default' => '');
 
-    // @todo change name to content_selector
-    $options['advanced']['contains']['content_class'] = array('default' => '');
+    $options['advanced']['contains']['content_selector'] = array('default' => '');
     $options['advanced']['contains']['pager_selector'] = array('default' => '');
 
-    $options['effects']['contains']['type'] = array('default' => 'none');
     $options['effects']['contains']['type'] = array('default' => '');
+    $options['effects']['contains']['speed'] = array('default' => '');
 
     return $options;
   }
@@ -116,15 +125,14 @@ class LoadMore extends Full {
       '#description' => $this->t('Configure advanced options.'),
     );
 
-    // Option to specify the content_class, which is the wrapping div for views
+    // Option to specify the content_selector, which is the wrapping div for views
     // rows.  This allows the JS to both find new rows on next pages and know
     // where to put them in the page.
-    // @todo change name to content_selector
-    $form['advanced']['content_class'] = array(
+    $form['advanced']['content_selector'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Content selection selector'),
-      '#description' => $this->t('jQuery selector for the rows wrapper, relative to the view container.  Use when overriding the views markup.  Note that Views Load More requires a wrapping element for the rows.  Unless specified, Views Load More will use <strong><code>&gt; .view-content</code></strong>.'),
-      '#default_value' => $this->options['advanced']['content_class'],
+      '#description' => $this->t('jQuery selector for the rows wrapper, relative to the view container.  Use when overriding the views markup.  Note that Views Load More requires a wrapping element for the rows.  Unless specified, Views Load More will use <strong><code>@content_selector</code></strong>.', array('@content_selector' => LoadMore::DEFAULT_CONTENT_SELECTOR)),
+      '#default_value' => $this->options['advanced']['content_selector'],
     );
 
     // Option to specify the pager_selector, which is the pager relative to the
@@ -132,7 +140,7 @@ class LoadMore extends Full {
     $form['advanced']['pager_selector'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Pager selector'),
-      '#description' => $this->t('jQuery selector for the pager, relative to the view container.  Use when overriding the pager markup so that Views Load More knows where to find and how to replace the pager.  Unless specified, Views Load More will use <strong><code>.pager-load-more</code></strong>.'),
+      '#description' => $this->t('jQuery selector for the pager, relative to the view container.  Use when overriding the pager markup so that Views Load More knows where to find and how to replace the pager.  Unless specified, Views Load More will use <strong><code>@pager_selector</code></strong>.', array('@pager_selector' => LoadMore::DEFAULT_PAGER_SELECTOR)),
       '#default_value' => $this->options['advanced']['pager_selector'],
     );
 
@@ -147,9 +155,9 @@ class LoadMore extends Full {
     $form['effects']['type'] = array(
       '#type' => 'select',
       '#options' => array(
-        'none' => $this->t('None'),
-        'fade' => $this->t('Fade'),
-        'slide' => $this->t('Slide'),
+        '' => $this->t('None'),
+        'fadeIn' => $this->t('Fade'),
+        'slideDown' => $this->t('Slide'),
       ),
       '#default_vaue' => 'none',
       '#title' => $this->t('Effect Type'),

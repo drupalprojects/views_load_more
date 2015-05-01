@@ -107,12 +107,11 @@ function views_load_more_views_ajax_data_alter(&$commands, $view) {
 /**
  * Implements hook_views_pre_render().
  *
- * Load js file only if ajax is enabled.
+ * @param \Drupal\views\ViewExecutable $view
  */
-function views_load_more_views_pre_render(&$view) {
-  if (!$view->use_ajax) {
-    return;
-  }
+function views_load_more_views_pre_render($view) {
 
-  drupal_add_js(drupal_get_path('module', 'views_load_more') . '/views_load_more.js');
+  if ($view->ajaxEnabled() && $view->getPager()->getPluginId() === 'load_more') {
+    $view->element['#attached']['library'][] = 'views_load_more/views_load_more';
+  }
 }
