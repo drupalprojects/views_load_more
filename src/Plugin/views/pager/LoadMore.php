@@ -51,8 +51,6 @@ class LoadMore extends Full {
   protected function defineOptions() {
     $options = parent::defineOptions();
 
-    $options['waypoint']['contains']['infinite'] = array('default' => FALSE);
-
     $options['more_button_text'] = array('default' => $this->t('Load more'));
     $options['end_text'] = array('default' => '');
 
@@ -95,24 +93,6 @@ class LoadMore extends Full {
       '#default_value' => $this->options['end_text'] ? $this->options['end_text'] : '',
     );
 
-    if (\Drupal::moduleHandler()->moduleExists('waypoints')) {
-      $form['waypoint'] = array(
-        '#type' => 'fieldset',
-        '#collapsible' => FALSE,
-        '#collapsed' => FALSE,
-        '#tree' => TRUE,
-        '#title' => $this->t('Waypoint Support'),
-        '#input' => TRUE,
-        '#description' => $this->t('Waypoints is a small jQuery plugin that makes it easy to execute a function whenever you scroll to an element.'),
-      );
-
-      $form['waypoint']['infinite'] = array(
-        '#type' => 'checkbox',
-        '#title' => $this->t('Infinite scrolling'),
-        '#description' => $this->t('Load more content when the user reaches the bottom of the page.'),
-        '#default_value' => $this->options['waypoint']['infinite'],
-      );
-    }
     // Adjust exposed details element weight
     $form['expose']['#weight'] = 10;
 
@@ -195,36 +175,6 @@ class LoadMore extends Full {
       '#more_button_text' => $this->options['more_button_text'],
       '#end_text' => $this->options['end_text'],
     );
-
-    if (\Drupal::moduleHandler()->moduleExists('waypoints') && $this->options['waypoint']['infinite'] == 1) {
-      $settings = array();
-      $waypoint_opts = array(
-        'offset' => '100%',
-      );
-      // Allow modules to alter the waypoint options.
-      // @todo this makes more sense on the JS side I think.
-      \Drupal::moduleHandler()->alter('views_load_more_waypoint_opts', $waypoint_opts, $this->view);
-
-      $settings[$this->view->name . '-' . $this->view->current_display] = array(
-        'view_name' => $this->view->name,
-        'view_display_id' => $this->view->current_display,
-        'waypoints' => 'infinite',
-        'opts' => $waypoint_opts,
-      );
-
-      // Add the JS settings to the render array.
-      $output['#attached'] = array(
-        'library' => array(
-          'waypoints/waypoints',
-        ),
-        'js' => array(
-          array(
-            'data' => $settings,
-            'type' => 'setting',
-          ),
-        ),
-      );
-    }
 
     return $output;
   }
