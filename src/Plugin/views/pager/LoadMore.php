@@ -82,19 +82,17 @@ class LoadMore extends Full {
     // Option for users to specify the text used on the 'load more' button.
     $form['more_button_text'] = array(
       '#type' => 'textfield',
-      '#title' => $this->t('More link text'),
+      '#title' => $this->t('Load more text'),
       '#description' => $this->t('The text that will be displayed on the link that is used to load more elements. For example "Show me more"'),
       '#default_value' => $this->options['more_button_text'] ? $this->options['more_button_text'] : $this->t('Load more'),
-      '#weight' => -1,
     );
 
     // Option for users to specify the text shown when there are no more results
     $form['end_text'] = array(
       '#type' => 'textfield',
-      '#title' => $this->t('End text'),
+      '#title' => $this->t('Finished text'),
       '#description' => $this->t('Optionally specify the text that is shown to the user in place of the pager link when the user has reached the end of the list, eg. "No more results".'),
       '#default_value' => $this->options['end_text'] ? $this->options['end_text'] : '',
-      '#weight' => -1,
     );
 
     if (\Drupal::moduleHandler()->moduleExists('waypoints')) {
@@ -115,6 +113,8 @@ class LoadMore extends Full {
         '#default_value' => $this->options['waypoint']['infinite'],
       );
     }
+    // Adjust exposed details element weight
+    $form['expose']['#weight'] = 10;
 
     // Advanced options, override default selectors.
     $form['advanced'] = array(
@@ -123,6 +123,7 @@ class LoadMore extends Full {
       '#tree' => TRUE,
       '#title' =>  $this->t('Advanced Options'),
       '#description' => $this->t('Configure advanced options.'),
+      '#weight' => 11,
     );
 
     // Option to specify the content_selector, which is the wrapping div for views
@@ -130,7 +131,7 @@ class LoadMore extends Full {
     // where to put them in the page.
     $form['advanced']['content_selector'] = array(
       '#type' => 'textfield',
-      '#title' => $this->t('Content selection selector'),
+      '#title' => $this->t('Content selector'),
       '#description' => $this->t('jQuery selector for the rows wrapper, relative to the view container.  Use when overriding the views markup.  Note that Views Load More requires a wrapping element for the rows.  Unless specified, Views Load More will use <strong><code>@content_selector</code></strong>.', array('@content_selector' => LoadMore::DEFAULT_CONTENT_SELECTOR)),
       '#default_value' => $this->options['advanced']['content_selector'],
     );
@@ -150,6 +151,7 @@ class LoadMore extends Full {
       '#open' => FALSE,
       '#tree' => TRUE,
       '#title' =>  $this->t('JQuery Effects'),
+      '#weight' => 12,
     );
 
     $form['effects']['type'] = array(
@@ -162,6 +164,7 @@ class LoadMore extends Full {
       '#default_vaue' => 'none',
       '#title' => $this->t('Effect Type'),
       '#default_value' => $this->options['effects']['type'],
+      '#description' => $this->t('jQuery animation to use to show new rows.'),
     );
 
     $form['effects']['speed'] = array(
