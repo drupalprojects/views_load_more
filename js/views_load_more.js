@@ -80,7 +80,7 @@
     $wrapper.trigger('views_load_more.new_content', new_content.clone());
 
     // Attach all JavaScript behaviors to the new content
-    $wrapper.removeOnce();
+    $wrapper.removeOnce('ajax-pager');
     Drupal.attachBehaviors($wrapper[0], settings);
   };
 
