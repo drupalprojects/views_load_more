@@ -136,3 +136,42 @@ function views_load_more_views_pre_render(&$view) {
     drupal_add_js(drupal_get_path('module', 'views_load_more') . '/views_load_more.js');
   }
 }
+
+/**
+ * Implements hook_features_pipe_COMPONENT_alter().
+ *
+ * @param array $pipe
+ *  Further processors to call.
+ * @param $data
+ *  An array of machine names for the component being exported.
+ * @param $export
+ *  An array of components being exported.
+ *
+ * @see hook_features_pipe_COMPONENT_alter()
+ */
+function views_load_more_features_pipe_views_view_alter(&$pipe, $data, &$export) {
+  // Each 'views_view' component in this feature will pass us its machine name.
+  foreach ($data as &$machine_name) {
+    // Try to load the view so we can see what components its using.
+    // If the "Load More" is in use, add this module as a dependency.
+    if ($view = views_get_view($machine_name)) {
+      // It isn't possible to know which display is using this pager,
+      // since the view isn't being executed,
+      // so we'll need to check them all.
+      foreach ($view->display as &$display) {
+        if (!empty($display->display_options['pager']['type'])
+          && $display->display_options['pager']['type'] == 'load_more') {
+          // Although we COULD replace the "views" dependency with our own,
+          // this is a really bad practice, because we will not always know
+          // if another module/component has a similiar intent.
+          // Changing that information could cause unintended errors.
+          $export['dependencies'][] = 'views_load_more';
+          // Check if waypoints is in use as well.
+          if (!empty($display->display_options['pager']['options']['waypoint']['infinite'])) {
+            $export['dependencies'][] = 'waypoints';
+          }
+        }
+      }
+    }
+  }
+}
