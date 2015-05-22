@@ -132,5 +132,7 @@ function views_load_more_views_pre_render(&$view) {
     return;
   }
 
-  drupal_add_js(drupal_get_path('module', 'views_load_more') . '/views_load_more.js');
+  if (isset($view->query->pager->plugin_name) && $view->query->pager->plugin_name == 'load_more') {
+    drupal_add_js(drupal_get_path('module', 'views_load_more') . '/views_load_more.js');
+  }
 }
