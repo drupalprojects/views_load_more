@@ -75,6 +75,8 @@ function views_load_more_views_ajax_data_alter(&$commands, $view) {
           'content' => $view->query->pager->options['advance']['content_class'],
           'pager_selector' => $view->query->pager->options['advance']['pager_selector'],
         );
+        // Trim html to avoid whitespaces.
+        $commands[$key]['data'] = trim($commands[$key]['data']);
       }
     }
   }
